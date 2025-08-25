@@ -1,0 +1,3 @@
+2025-08-24 22:08:29,710 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-08-24 22:08:29,711 - discord.client - INFO - logging in using static token
+2025-08-24 22:08:29,711 - __main__ - ERROR - Bot error: expected token to be a str, received NoneType instead
