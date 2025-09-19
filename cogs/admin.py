@@ -119,5 +119,18 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
         await self.bot.close()
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def setstatus(self, ctx, *, status: str):
+        """Change the bot's playing status"""
+        activity = discord.Game(name=status)
+        await self.bot.change_presence(activity=activity)
+        embed = discord.Embed(
+            title="✅ Status Updated",
+            description=f"Bot status changed to: **Playing {status}**",
+            color=discord.Color.green()
+        )
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(Admin(bot))

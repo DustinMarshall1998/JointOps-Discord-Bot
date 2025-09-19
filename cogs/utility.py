@@ -33,11 +33,34 @@ class Utility(commands.Cog):
         embed.add_field(name="Account Created", value=user.created_at.strftime("%B %d, %Y"), inline=True)
         embed.add_field(name="Joined Server", value=user.joined_at.strftime("%B %d, %Y") if user.joined_at else "N/A", inline=True)
         embed.add_field(name="Roles", value=f"{len(user.roles) - 1}", inline=True)
+        embed.add_field(name="Bot", value="Yes" if user.bot else "No", inline=True)
         
         if user.premium_since:
             embed.add_field(name="Boosting Since", value=user.premium_since.strftime("%B %d, %Y"), inline=True)
         
         await ctx.send(embed=embed)
+
+        @commands.command()
+        async def devbadge(self, ctx, member: discord.Member = None):
+            """Show Discord Developer badge for a user (if applicable)"""
+            member = member or ctx.author
+            badges = []
+            if member.public_flags.verified_bot_developer:
+                badges.append("👨‍💻 Discord Verified Bot Developer")
+            if badges:
+                embed = discord.Embed(
+                    title="🏅 Badges",
+                    description="\n".join(badges),
+                    color=discord.Color.gold()
+                )
+            else:
+                embed = discord.Embed(
+                    title="🏅 Badges",
+                    description="No Discord Developer badge found.",
+                    color=discord.Color.light_grey()
+                )
+            embed.set_author(name=str(member), icon_url=member.display_avatar.url)
+            await ctx.send(embed=embed)
     
     @commands.command()
     async def serverinfo(self, ctx):
@@ -186,21 +209,30 @@ class Utility(commands.Cog):
             await poll_msg.add_reaction(emojis[i])
     
     @commands.command()
-    async def remind(self, ctx, time: int, *, reminder):
+    async def reminder(self, ctx, time: str, *, reminder=None):
         """Set a reminder (time in minutes)"""
-        if time <= 0 or time > 1440:  # Max 24 hours
+        if reminder is None:
+            await ctx.send("❌ Please specify what you want to be reminded about!")
+            return
+        try:
+            minutes = int(time)
+        except ValueError:
+            await ctx.send("❌ Please specify the time in minutes as a number!")
+            return
+
+        if minutes <= 0 or minutes > 1440:  # Max 24 hours
             await ctx.send("❌ Time must be between 1 and 1440 minutes (24 hours)!")
             return
         
         embed = discord.Embed(
             title="⏰ Reminder Set!",
-            description=f"I'll remind you about: **{reminder}**\nIn {time} minute(s)",
+            description=f"I'll remind you about: **{reminder}**\nIn {minutes} minute(s)",
             color=discord.Color.green()
         )
         await ctx.send(embed=embed)
         
         # Wait for the specified time
-        await asyncio.sleep(time * 60)
+        await asyncio.sleep(minutes * 60)
         
         # Send reminder
         remind_embed = discord.Embed(
@@ -209,6 +241,23 @@ class Utility(commands.Cog):
             color=discord.Color.orange()
         )
         await ctx.send(f"{ctx.author.mention}", embed=remind_embed)
+
+    @commands.command()
+    async def tts(self, ctx, voice: str = "default", *, message: str = None):
+        """Send a text-to-speech message with optional voice (default, male, female)"""
+        if not message:
+            await ctx.send("❌ Please provide a message for TTS!")
+            return
+
+        # Discord only supports the default TTS voice set by the user's client.
+        # For custom voices, you would need to generate an audio file and play it in a voice channel.
+        # Here, we just acknowledge the voice parameter for future expansion.
+        supported_voices = ["default", "male", "female"]
+        if voice.lower() not in supported_voices:
+            await ctx.send(f"❌ Unsupported voice! Supported voices: {', '.join(supported_voices)}")
+            return
+
+        await ctx.send(message, tts=True)
 
 async def setup(bot):
     await bot.add_cog(Utility(bot))

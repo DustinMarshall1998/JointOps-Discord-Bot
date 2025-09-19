@@ -1,17 +1,19 @@
 {
   "bot": {
-    "name": "AllInOne Bot",
+    "name": "JointOps Bot",
     "description": "A comprehensive Discord bot with multiple features",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "color": "#7289DA"
   },
   "features": {
     "economy": {
-      "daily_reward": 100,
+      "daily_reward": 500,
       "work_min": 50,
-      "work_max": 200,
-      "crime_min": 100,
-      "crime_max": 500,
+      "work_max": 600,
+      "slut_min": 100,
+      "slut_max": 5000,
+      "crime_min": 25,
+      "crime_max": 25000,
       "crime_fail_rate": 0.3
     },
     "leveling": {

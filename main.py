@@ -1,7 +1,14 @@
+### Main bot file for JointOps Discord Bot Version 1.0.2
+##Made by: @CodeData_
+
+
+
+
 import discord
 from discord.ext import commands
 import os
 import asyncio
+import youtube_dl
 import logging
 from dotenv import load_dotenv
 import json
@@ -23,8 +30,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Load configuration
-with open('config.json', 'r') as f:
-    config = json.load(f)
+config = {}
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config.json')
+try:
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+except FileNotFoundError:
+    logger.error(f"config.json file not found at {config_path}. Please ensure it exists in the project directory.")
+    raise
+except json.JSONDecodeError as e:
+    logger.error(f"Error decoding config.json: {e}")
+    raise
 
 class JointOps(commands.Bot):
     def __init__(self):
@@ -44,13 +60,13 @@ class JointOps(commands.Bot):
         self.config = config
         self.db = DatabaseManager()
         
-    async def get_prefix(self, bot, message):
+    async def get_prefix(self, message):
         """Get custom prefix for each guild"""
         if message.guild is None:
-            return os.getenv('BOT_PREFIX', '/')
+            return os.getenv('BOT_PREFIX', '!')
         
         prefix = await self.db.get_guild_prefix(message.guild.id)
-        return prefix or os.getenv('BOT_PREFIX', '/')
+        return prefix or os.getenv('BOT_PREFIX', '!')
     
     async def setup_hook(self):
         """Initialize the bot"""
@@ -68,7 +84,8 @@ class JointOps(commands.Bot):
             'cogs.leveling',
             'cogs.music',
             'cogs.admin',
-            'cogs.help'
+            'cogs.help',
+            'cogs.auto_mod',
         ]
         
         for extension in extensions:

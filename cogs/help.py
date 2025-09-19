@@ -6,7 +6,7 @@ class Help(commands.Cog):
         self.bot = bot
     
     @commands.command()
-    async def help(self, ctx, *, command=None):
+    async def help(self, ctx, *, command: str = None):
         """Show help information"""
         if command:
             # Show help for specific command
@@ -14,7 +14,7 @@ class Help(commands.Cog):
             if cmd:
                 embed = discord.Embed(
                     title=f"📖 Help: {cmd.name}",
-                    description=cmd.help or "No description available",
+                    description=cmd.help or "A list of commands that can be use to help you understand each command.",
                     color=discord.Color.blue()
                 )
                 embed.add_field(name="Usage", value=f"`{ctx.prefix}{cmd.name} {cmd.signature}`", inline=False)
@@ -29,7 +29,7 @@ class Help(commands.Cog):
         
         # Show general help
         embed = discord.Embed(
-            title="🤖 AllInOne Bot - Help",
+            title="🤖 JointOps Bot - Help",
             description=f"Prefix: `{ctx.prefix}` | Use `{ctx.prefix}help <command>` for detailed info",
             color=discord.Color.blue()
         )
@@ -88,7 +88,7 @@ class Help(commands.Cog):
         await ctx.send(embed=embed)
     
     @commands.command()
-    async def commands(self, ctx):
+    async def commands(self, ctx, command: str = None):
         """List all available commands"""
         all_commands = []
         
@@ -117,32 +117,32 @@ class Help(commands.Cog):
             )
         
         await ctx.send(embed=embed)
-    
-    @commands.command()
-    async def info(self, ctx):
-        """Show bot information"""
-        embed = discord.Embed(
-            title="🤖 Bot Information",
-            color=discord.Color.blue()
-        )
+
+@commands.command()
+async def info(self, ctx):
+    """Show bot information"""
+    embed = discord.Embed(
+        title="🤖 Bot Information",
+        color=discord.Color.blue()
+    )
         
-        embed.add_field(name="Name", value=self.bot.config['bot']['name'], inline=True)
-        embed.add_field(name="Version", value=self.bot.config['bot']['version'], inline=True)
-        embed.add_field(name="Servers", value=len(self.bot.guilds), inline=True)
+    embed.add_field(name="Name", value=self.bot.config['bot']['name'], inline=True)
+    embed.add_field(name="Version", value=self.bot.config['bot']['version'], inline=True)
+    embed.add_field(name="Servers", value=len(self.bot.guilds), inline=True)
         
-        embed.add_field(name="Language", value="Python 3.8+", inline=True)
-        embed.add_field(name="Library", value="discord.py", inline=True)
-        embed.add_field(name="Latency", value=f"{round(self.bot.latency * 1000)}ms", inline=True)
+    embed.add_field(name="Language", value="Python 3.7+", inline=True)
+    embed.add_field(name="Library", value="discord.py", inline=True)
+    embed.add_field(name="Latency", value=f"{round(self.bot.latency * 1000)}ms", inline=True)
         
-        embed.add_field(
-            name="Features",
-            value="• Moderation System\n• Economy & Leveling\n• Fun Commands\n• Music Player\n• Utility Tools",
-            inline=False
-        )
+    embed.add_field(
+        name="Features",
+        value="• Moderation System\n• Economy & Leveling\n• Fun Commands\n• Music Player\n• Utility Tools",
+        inline=False
+    )
         
-        embed.set_footer(text="Made with ❤️ for Discord communities")
+    embed.set_footer(text="Made with ❤️ for Discord communities")
         
-        await ctx.send(embed=embed)
+    await ctx.send(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Help(bot))

@@ -91,7 +91,7 @@ A comprehensive, highly customizable Discord bot with multiple features includin
 ```json
 {
   "bot": {
-    "name": "AllInOne Bot",
+    "name": "JointOps Discord Bot",
     "description": "A comprehensive Discord bot",
     "version": "1.0.0",
     "color": "#7289DA"
@@ -165,7 +165,7 @@ A comprehensive, highly customizable Discord bot with multiple features includin
 ## 🏗️ Project Structure
 
 ```
-allinone-discord-bot/
+JointOps-discord-bot/
 ├── main.py                 # Main bot file
 ├── config.json            # Bot configuration
 ├── requirements.txt       # Python dependencies
