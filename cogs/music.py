@@ -1,13 +1,21 @@
+## music.py. Cog for music commands.
+## Requirements:
+# - discord.py
+# - asyncio for asynchronous operations and timing
 import discord
 from discord.ext import commands
 import asyncio
 
+## class Music Cog. For music commands.
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.voice_clients = {}
         self.queues = {}
     
+    ## Command to join the voice channel of the user.
+    ## If already connected, informs the user.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def join(self, ctx):
         """Join the voice channel"""
@@ -35,6 +43,10 @@ class Music(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ Failed to join voice channel: {str(e)}")
     
+    ## Command to leave the voice channel.
+    ## If not connected, informs the user.
+    ## Clears the queue and removes the voice client reference.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def leave(self, ctx):
         """Leave the voice channel"""
@@ -55,7 +67,10 @@ class Music(commands.Cog):
             color=discord.Color.red()
         )
         await ctx.send(embed=embed)
-    
+
+    ## Command to play a song. Placeholder implementation.
+    ## In a real bot, you'd integrate with youtube_dl or similar to fetch and play audio.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def play(self, ctx, *, url=None):
         """Play a song (placeholder - requires additional setup for actual audio)"""
@@ -79,6 +94,9 @@ class Music(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to show the current queue.
+    ## Displays the first 10 songs in the queue.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def queue(self, ctx):
         """Show the current queue"""
@@ -104,6 +122,9 @@ class Music(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to skip the current song.
+    ## If nothing is playing, informs the user.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def skip(self, ctx):
         """Skip the current song"""
@@ -118,6 +139,9 @@ class Music(commands.Cog):
         else:
             await ctx.send("❌ Nothing is currently playing!")
     
+    ## Command to adjust the volume. Placeholder implementation.
+    ## In a real bot, you'd adjust the audio source volume.
+    ## Uses embeds for better formatting and readability.
     @commands.command()
     async def volume(self, ctx, volume: int = None):
         """Adjust or check the volume"""
@@ -136,5 +160,6 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+### Setup function to add the Music cog to the bot
 async def setup(bot):
     await bot.add_cog(Music(bot))

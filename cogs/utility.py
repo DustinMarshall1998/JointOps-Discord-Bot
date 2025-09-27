@@ -1,3 +1,19 @@
+## Utility Cog. For various utility commands.
+## Features:
+# - User info command
+# - Server info command
+# - Avatar command
+# - Weather command with API integration
+# - Calculator command
+# - Poll command with reactions
+# - Reminder command with timed notifications
+# - Text-to-speech command
+## Requirements:
+# - discord.py
+# - aiohttp for API requests
+# - asyncio for asynchronous operations
+# - datetime for timestamps
+# - os for environment variables and file paths
 import discord
 from discord.ext import commands
 import aiohttp
@@ -5,16 +21,21 @@ import asyncio
 from datetime import datetime
 import os
 
+## class Utility Cog. For various utility commands.
 class Utility(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.session = aiohttp.ClientSession()
-    
+
+    ## Cleanup when cog is unloaded
     def cog_unload(self):
         """Clean up when cog is unloaded"""
         if self.session:
             asyncio.create_task(self.session.close())
     
+    ## Command to get information about a user. Defaults to the command invoker if no user is specified.
+    ## Displays username, ID, status, account creation date, join date, roles, and bot status.
+    ## Uses an embed for better formatting.
     @commands.command()
     async def userinfo(self, ctx, member: discord.Member = None):
         """Get information about a user"""
@@ -40,6 +61,10 @@ class Utility(commands.Cog):
         
         await ctx.send(embed=embed)
 
+        ## Command to show help information.
+        ## Displays a categorized list of commands in an embed.
+        ## Excludes hidden commands and the help command itself.
+        ## Formats commands in chunks for better readability.
         @commands.command()
         async def devbadge(self, ctx, member: discord.Member = None):
             """Show Discord Developer badge for a user (if applicable)"""
@@ -62,6 +87,9 @@ class Utility(commands.Cog):
             embed.set_author(name=str(member), icon_url=member.display_avatar.url)
             await ctx.send(embed=embed)
     
+    ## Command to get information about the server.
+    ## Displays server name, ID, owner, creation date, member count, channel count, role count, verification level, boost level, and description.
+    ## Uses an embed for better formatting.
     @commands.command()
     async def serverinfo(self, ctx):
         """Get information about the server"""
@@ -92,6 +120,8 @@ class Utility(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to get a user's avatar. Defaults to the command invoker if no user is specified.
+    ## Displays the avatar in an embed with a direct link.
     @commands.command()
     async def avatar(self, ctx, member: discord.Member = None):
         """Get a user's avatar"""
@@ -108,6 +138,9 @@ class Utility(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to get weather information for a specified city.
+    ## Integrates with OpenWeatherMap API. Requires an API key set in environment variables.
+    ## Displays temperature, humidity, weather description, wind speed, and pressure in an embed.
     @commands.command()
     async def weather(self, ctx, *, city=None):
         """Get weather information for a city"""
@@ -147,6 +180,10 @@ class Utility(commands.Cog):
         except Exception as e:
             await ctx.send("❌ An error occurred while fetching weather data!")
     
+    ## Command to calculate a mathematical expression.
+    ## Supports basic arithmetic operations: +, -, *, /, parentheses.
+    ## Validates input to prevent code injection.
+    ## Responds with the result in an embed.
     @commands.command()
     async def calculate(self, ctx, *, expression):
         """Calculate a mathematical expression"""
@@ -177,6 +214,9 @@ class Utility(commands.Cog):
         except Exception as e:
             await ctx.send("❌ Invalid mathematical expression!")
     
+    ## Command to create a poll with reactions.
+    ## Users can specify a question and multiple options (up to 10).
+    ## Responds with an embed containing the poll and adds reaction emojis for voting.
     @commands.command()
     async def poll(self, ctx, question, *options):
         """Create a poll with reactions"""
@@ -208,6 +248,9 @@ class Utility(commands.Cog):
         for i in range(len(options)):
             await poll_msg.add_reaction(emojis[i])
     
+    ## Command to set a reminder.
+    ## Users can specify a time in minutes and a reminder message.
+    ## Sends a confirmation embed and a reminder message after the specified time.
     @commands.command()
     async def reminder(self, ctx, time: str, *, reminder=None):
         """Set a reminder (time in minutes)"""
@@ -242,6 +285,10 @@ class Utility(commands.Cog):
         )
         await ctx.send(f"{ctx.author.mention}", embed=remind_embed)
 
+    ## Command to send a text-to-speech message with optional voice.
+    ## Discord only supports the default TTS voice set by the user's client.
+    ## For custom voices, you would need to generate an audio file and play it in a voice channel.
+    ## Here, we just acknowledge the voice parameter for future expansion.
     @commands.command()
     async def tts(self, ctx, voice: str = "default", *, message: str = None):
         """Send a text-to-speech message with optional voice (default, male, female)"""
@@ -259,5 +306,6 @@ class Utility(commands.Cog):
 
         await ctx.send(message, tts=True)
 
+### Setup function to add the Utility cog to the bot
 async def setup(bot):
     await bot.add_cog(Utility(bot))

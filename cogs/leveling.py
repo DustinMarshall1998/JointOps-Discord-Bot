@@ -1,24 +1,42 @@
+## Leveling Cog. Provides a leveling system for users based on their activity.
+## Features:
+# - Users earn XP for sending messages, with a cooldown to prevent spam
+# - Level up notifications in the channel where the user leveled up
+# - Commands to check user levels and XP
+# - Leaderboard command to show top users by level
+## Requirements:
+# - discord.py
+# - math for level calculations
+# - datetime for cooldown management
 import discord
 from discord.ext import commands
 import random
 import math
 from datetime import datetime, timedelta
 
+## class Leveling Cog. For user leveling system.
 class Leveling(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.last_message_time = {}  # Track cooldowns per user
     
+    ## Calculate level based on XP using a square root formula.
+    ## The level increases as the square root of the XP divided by a multiplier.
+    ## This creates a progressively harder leveling curve.
     def calculate_level(self, xp):
         """Calculate level based on XP"""
         multiplier = self.bot.config['features']['leveling']['level_multiplier']
         return int(math.sqrt(xp / multiplier)) + 1
-    
+
+    ## Calculate XP needed for a specific level.
     def calculate_xp_for_level(self, level):
         """Calculate XP needed for a specific level"""
         multiplier = self.bot.config['features']['leveling']['level_multiplier']
         return ((level - 1) ** 2) * multiplier
     
+    ## Event listener for message events to give XP.
+    ## Users earn XP for each message they send, subject to a cooldown to prevent spam.
+    ## When a user levels up, a notification is sent in the channel.
     @commands.Cog.listener()
     async def on_message(self, message):
         """Give XP for messages"""
@@ -60,6 +78,9 @@ class Leveling(commands.Cog):
             
             await message.channel.send(embed=embed)
     
+    ## Command to check a user's level and XP.
+    ## If no user is specified, shows the command invoker's level.
+    ## Displays current level, total XP, and progress towards the next level with a progress bar
     @commands.command()
     async def level(self, ctx, member: discord.Member = None):
         """Check your or someone else's level"""
@@ -91,6 +112,9 @@ class Leveling(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to show the server leaderboard.
+    ## Displays the top 10 users by level in the server.
+    ## Uses an embed for better formatting.
     @commands.command()
     async def leaderboard(self, ctx):
         """Show the server leaderboard"""
@@ -103,5 +127,6 @@ class Leveling(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+### Setup function to add the Leveling cog to the bot
 async def setup(bot):
     await bot.add_cog(Leveling(bot))

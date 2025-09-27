@@ -1,18 +1,35 @@
+## Admin Cog for managing bot settings and extensions. 
+## Commands include setting server prefix, viewing settings, loading/unloading/reloading cogs, and shutting down the bot.
+## Permissions checks ensure only authorized users can execute sensitive commands.
+## Uses embeds for better message formatting and user feedback.
+## Requires discord.py library and a database manager for persistent storage.
+## Environment variables used:
+# - OWNER_ID: Discord user ID of the bot owner for permission checks.
+# - BOT_PREFIX: Default command prefix for the bot. Defaults to '!' if not set.
+
+# Recent edits to this file: Added setstatus command to change bot's playing status.
+
+# Imports (discord.py, commands extension, json, os)
 import discord
 from discord.ext import commands
 import json
 import os
 
+## class Admin Cog. For managing bot settings and extensions.
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    #check if user is bot owner. Used for permission checks on sensitive commands.
     def is_owner():
         """Check if user is bot owner"""
         def predicate(ctx):
             return ctx.author.id == int(os.getenv('OWNER_ID', 0))
         return commands.check(predicate)
     
+    # Command to set the server prefix. Only the bot owner can use this command.
+    # Validates the prefix length and updates it in the database.
+    # Sends a confirmation embed message upon success.  
     @commands.command()
     @is_owner()
     async def setprefix(self, ctx, *, prefix):
@@ -30,6 +47,10 @@ class Admin(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to show current server settings.
+    ## Displays settings like prefix, auto moderation status, leveling system status, and economy system status.
+    ## Uses an embed for better formatting.
+    ## Requires administrator permissions to use.
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def settings(self, ctx):
@@ -47,6 +68,10 @@ class Admin(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to reload a cog (extension).
+    ## Only the bot owner can use this command.
+    ## Attempts to reload the specified cog and sends a success or failure embed message.
+    ## Cogs are located in the 'cogs' directory.
     @commands.command()
     @is_owner()
     async def reload(self, ctx, *, extension):
@@ -67,6 +92,10 @@ class Admin(commands.Cog):
             )
             await ctx.send(embed=embed)
     
+    ## Command to load a cog (extension).
+    ## Only the bot owner can use this command.
+    ## Attempts to load the specified cog and sends a success or failure embed message.
+    ## Cogs are located in the 'cogs' directory.
     @commands.command()
     @is_owner()
     async def load(self, ctx, *, extension):
@@ -87,6 +116,10 @@ class Admin(commands.Cog):
             )
             await ctx.send(embed=embed)
     
+    ## Command to unload a cog (extension).
+    ## Only the bot owner can use this command.
+    ## Attempts to unload the specified cog and sends a success or failure embed message.
+    ## Cogs are located in the 'cogs' directory.
     @commands.command()
     @is_owner()
     async def unload(self, ctx, *, extension):
@@ -107,6 +140,9 @@ class Admin(commands.Cog):
             )
             await ctx.send(embed=embed)
     
+    ## Command to shut down the bot.
+    ## Only the bot owner can use this command.
+    ## Sends a shutdown confirmation embed message before closing the bot.
     @commands.command()
     @is_owner()
     async def shutdown(self, ctx):
@@ -119,6 +155,10 @@ class Admin(commands.Cog):
         await ctx.send(embed=embed)
         await self.bot.close()
 
+    ## Command to change the bot's playing status.
+    ## Requires administrator permissions to use.
+    ## Updates the bot's presence to show the specified status message.
+    ## Sends a confirmation embed message upon success.
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def setstatus(self, ctx, *, status: str):
@@ -132,5 +172,6 @@ class Admin(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+## Setup function to add the Admin cog to the bot
 async def setup(bot):
     await bot.add_cog(Admin(bot))

@@ -1,10 +1,24 @@
+## Help Cog. Provides help and info commands for the bot.
+## Features:
+# - General help command listing all commands by category
+# - Detailed help for specific commands
+# - Command to list all available commands
+# - Command to show bot information (version, servers, latency, etc.)
+## Requirements:
+# - discord.py
 import discord
 from discord.ext import commands
 
+## class Help Cog. For help and info commands.
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    ## Command to show help information.
+    ## If a specific command is provided, shows detailed help for that command.
+    ## Otherwise, lists all commands categorized by their cogs.
+    ## Uses embeds for better formatting and readability.
+    ## Includes bot version and prefix in the footer.
     @commands.command()
     async def help(self, ctx, *, command: str = None):
         """Show help information"""
@@ -87,6 +101,10 @@ class Help(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to list all available commands.
+    ## Displays all commands from all cogs in a single embed.
+    ## Excludes hidden commands and the help command itself.
+    ## Formats commands in chunks for better readability.   
     @commands.command()
     async def commands(self, ctx, command: str = None):
         """List all available commands"""
@@ -118,6 +136,10 @@ class Help(commands.Cog):
         
         await ctx.send(embed=embed)
 
+## Command to show bot information.
+    ## Displays bot name, version, number of servers, latency, and features.
+    ## Uses an embed for better formatting.
+    ## Includes a footer with a custom message.
 @commands.command()
 async def info(self, ctx):
     """Show bot information"""
@@ -144,5 +166,6 @@ async def info(self, ctx):
         
     await ctx.send(embed=embed)
 
+### Setup function to add the Help cog to the bot
 async def setup(bot):
     await bot.add_cog(Help(bot))

@@ -54,61 +54,9 @@ A comprehensive, highly customizable Discord bot with multiple features includin
 
 ### Installation
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yourusername/allinone-discord-bot.git
-   cd allinone-discord-bot
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Set up environment variables:**
-   - Copy `.env.example` to `.env`
-   - Fill in your Discord bot token and other API keys:
-   ```env
-   DISCORD_TOKEN=your_bot_token_here
-   WEATHER_API_KEY=your_openweathermap_api_key
-   YOUTUBE_API_KEY=your_youtube_api_key
-   BOT_PREFIX=!
-   OWNER_ID=your_discord_user_id
-   ```
-
-4. **Configure the bot:**
+**Configure the bot:**
    - Edit `config.json` to customize bot settings
    - Adjust economy values, XP rates, and other features
-
-5. **Run the bot:**
-   ```bash
-   python main.py
-   ```
-
-## 🔧 Configuration
-
-### Bot Settings (`config.json`)
-```json
-{
-  "bot": {
-    "name": "JointOps Discord Bot",
-    "description": "A comprehensive Discord bot",
-    "version": "1.0.0",
-    "color": "#7289DA"
-  },
-  "features": {
-    "economy": {
-      "daily_reward": 100,
-      "work_min": 50,
-      "work_max": 200
-    },
-    "leveling": {
-      "xp_per_message": 15,
-      "xp_cooldown": 60
-    }
-  }
-}
-```
 
 ### Environment Variables
 - `DISCORD_TOKEN`: Your Discord bot token
@@ -173,7 +121,8 @@ JointOps-discord-bot/
 ├── database/
 │   └── db_manager.py     # Database management
 └── cogs/
-    ├── admin.py          # Admin commands
+    ├── admin.py
+    ├── auto-mod.py       # Auto mod system         # Admin commands
     ├── economy.py        # Economy system
     ├── fun.py            # Fun commands
     ├── help.py           # Help system

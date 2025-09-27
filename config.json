@@ -2,7 +2,7 @@
   "bot": {
     "name": "JointOps Bot",
     "description": "A comprehensive Discord bot with multiple features",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "color": "#7289DA"
   },
   "features": {

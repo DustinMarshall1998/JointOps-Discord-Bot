@@ -1,13 +1,34 @@
+## Database management module for the Discord bot
+## Handles SQLite database interactions for persistent data storage
+## Features:
+# - Guild settings (prefix, welcome channel, mod log channel)
+# - User economy (balance, bank, daily rewards)
+# - User levels (xp, level)
+# - Moderation logs (ban, kick, mute records)
+## Requirements:
+# - aiosqlite
+# - sqlite3
+# - logging
+# - os
+import os
 import sqlite3
 import aiosqlite
 import logging
 
+# Setup logging
+# Create a logs directory if it doesn't exist
+if not os.path.exists('logs'):
+    os.makedirs('logs')
 logger = logging.getLogger(__name__)
 
+## DatabaseManager class to handle all database operations
 class DatabaseManager:
     def __init__(self, db_path="bot_database.db"):
         self.db_path = db_path
     
+    ## Initialize the database and create necessary tables if they don't exist
+    ## This method sets up tables for guild settings, user economy, user levels, and moderation logs.
+    ## It ensures that the database is ready for use when the bot starts.
     async def initialize(self):
         """Initialize database tables"""
         async with aiosqlite.connect(self.db_path) as db:
@@ -64,7 +85,8 @@ class DatabaseManager:
             await db.commit()
             logger.info("Database initialized successfully")
     
-    # Guild settings methods
+    ## Guild settings methods. For managing guild-specific configurations.
+    ## Methods include getting and setting the command prefix.
     async def get_guild_prefix(self, guild_id):
         async with aiosqlite.connect(self.db_path) as db:
             cursor = await db.execute(
@@ -74,6 +96,7 @@ class DatabaseManager:
             result = await cursor.fetchone()
             return result[0] if result else None
     
+    ## Set the command prefix for a specific guild.
     async def set_guild_prefix(self, guild_id, prefix):
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute(
@@ -82,6 +105,7 @@ class DatabaseManager:
             )
             await db.commit()
     
+    ## Add a new guild to the database when the bot joins it. 
     async def add_guild(self, guild_id):
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute(
@@ -90,7 +114,8 @@ class DatabaseManager:
             )
             await db.commit()
     
-    # Economy methods
+    # Economy methods. For managing user economy data.
+    # Methods include getting and updating user balances.
     async def get_user_balance(self, user_id, guild_id):
         async with aiosqlite.connect(self.db_path) as db:
             cursor = await db.execute(
@@ -121,7 +146,8 @@ class DatabaseManager:
             
             await db.commit()
     
-    # Leveling methods
+    # Leveling methods. For managing user leveling data.
+    # Methods include getting and updating user XP and levels.
     async def get_user_level_data(self, user_id, guild_id):
         async with aiosqlite.connect(self.db_path) as db:
             cursor = await db.execute(
@@ -139,7 +165,8 @@ class DatabaseManager:
             )
             await db.commit()
     
-    # Moderation logs
+    # Moderation logs. For recording moderation actions.
+    # Methods include adding a new moderation log entry.
     async def add_mod_log(self, guild_id, user_id, moderator_id, action, reason, timestamp):
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute(

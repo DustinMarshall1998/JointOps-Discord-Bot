@@ -1,12 +1,26 @@
+## Moderation Cog. Provides moderation commands and auto-moderation features.
+## Features:
+# - Kick, ban, mute, unmute commands with logging
+# - Clear messages command with logging
+# - Auto-moderation for invite links and excessive mentions
+# - Logs moderation actions to the database
+## Requirements:
+# - discord.py
+# - datetime for timestamps
+# - asyncio for timed actions
 import discord
 from discord.ext import commands
 from datetime import datetime
 import asyncio
 
+## class Moderation Cog. For moderation commands and auto-moderation features.
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    ## Kick command to remove a member from the server.
+    ## Requires the user to have kick permissions.
+    ## Logs the action to the database and sends a confirmation embed.
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason="No reason provided"):
@@ -35,6 +49,9 @@ class Moderation(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ An error occurred: {str(e)}")
     
+    ## Ban command to permanently remove a member from the server.
+    ## Requires the user to have ban permissions.
+    ## Logs the action to the database and sends a confirmation embed.
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member, *, reason="No reason provided"):
@@ -63,6 +80,9 @@ class Moderation(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ An error occurred: {str(e)}")
     
+    ## Clear command to bulk delete messages from a channel.
+    ## Requires the user to have manage messages permissions.
+    ## Logs the action to the database and sends a confirmation embed.
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int = 10):
@@ -90,6 +110,10 @@ class Moderation(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ An error occurred: {str(e)}")
     
+    ## Mute command to mute a member for a specified duration.
+    ## Requires the user to have manage roles permissions.
+    ## Creates a "Muted" role if it doesn't exist and sets appropriate permissions.
+    ## Logs the action to the database and sends a confirmation embed.
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, member: discord.Member, duration: int = 10, *, reason="No reason provided"):
@@ -131,6 +155,9 @@ class Moderation(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ An error occurred: {str(e)}")
     
+    ## Unmute command to remove the mute from a member.
+    ## Requires the user to have manage roles permissions.
+    ## Logs the action to the database and sends a confirmation embed.
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: discord.Member):
@@ -156,6 +183,10 @@ class Moderation(commands.Cog):
         except Exception as e:
             await ctx.send(f"❌ An error occurred: {str(e)}")
     
+    ## Auto-moderation listener to monitor messages for invite links and excessive mentions.
+    ## Deletes offending messages and warns the user.
+    ## Logs moderation actions to the database.
+    ## Requires the bot to have manage messages permissions.
     @commands.Cog.listener()
     async def on_message(self, message):
         """Auto-moderation features"""
@@ -175,5 +206,6 @@ class Moderation(commands.Cog):
             await message.delete()
             await message.channel.send(f"❌ {message.author.mention}, too many mentions in one message!", delete_after=5)
 
+### Setup function to add the Moderation cog to the bot
 async def setup(bot):
     await bot.add_cog(Moderation(bot))

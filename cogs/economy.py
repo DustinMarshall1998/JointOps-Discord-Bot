@@ -1,13 +1,21 @@
+## Economy Cog (balance, daily, work, crime, deposit, withdraw, pay)
+# Imports (discord.py, commands extension, random, datetime, asyncio)
 import discord
 from discord.ext import commands
 import random
 from datetime import datetime, timedelta
 import asyncio
 
+## class Economy Cog. For user economy features.
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+    ## Command to check balance.
+    ## Can check own balance or another member's balance.
+    ## Displays wallet, bank, and total balance in an embed.
+    ## If no member is specified, defaults to the command invoker.
+    @commands.cooldown(1, 5, commands.BucketType.user)  # 5 second cooldown
     @commands.command()
     async def balance(self, ctx, member: discord.Member = None):
         """Check your or someone else's balance"""
@@ -25,6 +33,10 @@ class Economy(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to claim daily reward.
+    ## Users can claim a set amount of money once every 24 hours.
+    ## Displays the amount received and new balance in an embed.
+    ## Implements a cooldown to enforce the 24-hour limit.
     @commands.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)  # 24 hour cooldown
     async def daily(self, ctx):
@@ -42,6 +54,11 @@ class Economy(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to work and earn money.
+    ## Users can work once every hour to earn a random amount of money.
+    ## The job type is randomly selected from a predefined list.
+    ## Displays the job, amount earned, and new balance in an embed.
+    ## Implements a cooldown to enforce the 1-hour limit.
     @commands.command()
     @commands.cooldown(1, 3600, commands.BucketType.user)  # 1 hour cooldown
     async def work(self, ctx):
@@ -67,6 +84,11 @@ class Economy(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to attempt a crime for money.
+    ## Users can attempt a crime once every 2 hours to earn a random amount of money.
+    ## There is a chance of failure, resulting in a fine instead of earnings.
+    ## Displays the crime outcome, amount earned or fined, and new balance in an embed.
+    ## Implements a cooldown to enforce the 2-hour limit.
     @commands.command()
     @commands.cooldown(1, 7200, commands.BucketType.user)  # 2 hour cooldown
     async def crime(self, ctx):
@@ -106,6 +128,10 @@ class Economy(commands.Cog):
         
         await ctx.send(embed=embed)
     
+    ## Command to deposit money into the bank.
+    ## Users can deposit a specified amount or 'all' of their wallet balance.
+    ## Displays the amount deposited and new balances in an embed.
+    ## Validates input to ensure positive amounts and sufficient wallet balance.
     @commands.command()
     async def deposit(self, ctx, amount: str):
         """Deposit money into your bank"""
@@ -140,6 +166,10 @@ class Economy(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to withdraw money from the bank.
+    ## Users can withdraw a specified amount or 'all' of their bank balance.
+    ## Displays the amount withdrawn and new balances in an embed.
+    ## Validates input to ensure positive amounts and sufficient bank balance.
     @commands.command()
     async def withdraw(self, ctx, amount: str):
         """Withdraw money from your bank"""
@@ -174,6 +204,10 @@ class Economy(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to pay another user.
+    ## Users can transfer a specified amount of money to another member.
+    ## Validates input to ensure positive amounts, sufficient balance, and prevents paying bots or oneself.
+    ## Displays the payment details in an embed.
     @commands.command()
     async def pay(self, ctx, member: discord.Member, amount: int):
         """Pay another user"""
@@ -208,5 +242,6 @@ class Economy(commands.Cog):
         )
         await ctx.send(embed=embed)
 
+## Setup function to add the Economy cog to the bot
 async def setup(bot):
     await bot.add_cog(Economy(bot))

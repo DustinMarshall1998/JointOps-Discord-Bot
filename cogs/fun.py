@@ -1,3 +1,19 @@
+## Fun Cog for Discord Bot
+## Provides various entertaining commands for users.
+## Features:
+# - Ping command to check bot latency
+# - Dice roll command with customizable sides
+# - Coin flip command
+# - Random joke command with API integration and fallback jokes
+# - Inspirational quote command with API integration and fallback quotes
+# - Rock Paper Scissors game against the bot
+# - Magic 8-Ball command for random answers
+# - Random meme command with API integration
+## Requirements:
+# - discord.py
+# - aiohttp for API requests
+# - asyncio for asynchronous operations
+# - random for random selections and numbers
 import asyncio
 import discord
 from discord.ext import commands
@@ -5,6 +21,7 @@ import random
 import aiohttp
 import json
 
+## class Fun Cog. For fun commands and games.
 class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -15,6 +32,9 @@ class Fun(commands.Cog):
         if self.session:
             asyncio.create_task(self.session.close())
     
+    ## Command to check bot latency.
+    ## Responds with the bot's latency in milliseconds.
+    ## Useful for diagnosing connection issues.
     @commands.command()
     async def ping(self, ctx):
         """Check bot latency"""
@@ -26,6 +46,11 @@ class Fun(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to roll a dice with a specified number of sides.
+    ## Users can specify the number of sides (default is 6).
+    ## Validates input to ensure the number of sides is between 2 and 100.
+    ## Responds with the result of the dice roll in an embed.
+    @commands.cooldown(1, 3, commands.BucketType.user)  # 3 second cooldown
     @commands.command()
     async def roll(self, ctx, sides: int = 6):
         """Roll a dice with specified sides"""
@@ -45,6 +70,10 @@ class Fun(commands.Cog):
         )
         await ctx.send(embed=embed)
     
+    ## Command to flip a coin.
+    ## Randomly returns Heads or Tails.
+    ## Responds with the result in an embed.
+    @commands.cooldown(1, 3, commands.BucketType.user)  # 3 second cooldown
     @commands.command()
     async def coinflip(self, ctx):
         """Flip a coin"""
